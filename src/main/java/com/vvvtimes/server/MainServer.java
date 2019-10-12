@@ -70,7 +70,7 @@ public class MainServer extends AbstractHandler {
 
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        System.out.println(target);
+        System.out.println("请求地址：" + target);
         if (target.equals("/")) {
             indexHandler(target, baseRequest, request, response);
         } else if (target.equals("/jrebel/leases")) {
@@ -256,11 +256,13 @@ public class MainServer extends AbstractHandler {
         baseRequest.setHandled(true);
 
         int port = request.getServerPort();
+		String scheme = request.getScheme();
+		
         String html = "<h1>Hello,This is a Jrebel & JetBrains License Server!</h1>";
-        html += "<p>License Server started at http://localhost:" + port;
-        html += "<p>JetBrains Activation address was: <span style='color:red'>http://localhost:" + port + "/";
-        html += "<p>JRebel 7.1 and earlier version Activation address was: <span style='color:red'>http://localhost:" + port + "/{tokenname}</span>, with any email.";
-        html += "<p>JRebel 2018.1 and later version Activation address was: http://localhost:" + port + "/{guid}(eg:<span style='color:red'>http://localhost:" + port + "/"+ UUID.randomUUID().toString()+"</span>), with any email.";
+        html += "<p>License Server started at " + scheme + "://"+request.getServerName()+":" + port;
+        html += "<p>JetBrains Activation address was: <span style='color:red'>" + scheme + "://"+request.getServerName()+":" + port + "/";
+        html += "<p>JRebel 7.1 and earlier version Activation address was: <span style='color:red'>" + scheme + "://"+request.getServerName()+":" + port + "/{tokenname}</span>, with any email.";
+        html += "<p>JRebel 2018.1 and later version Activation address was: " + scheme + "://"+request.getServerName()+":" + port + "/{guid}(eg:<span style='color:red'>" + scheme + "://"+request.getServerName()+":" + port + "/"+ UUID.randomUUID().toString()+"</span>), with any email.";
 
         response.getWriter().println(html);
 
