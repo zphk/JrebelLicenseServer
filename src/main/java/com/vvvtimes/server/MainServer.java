@@ -3,44 +3,37 @@ package com.vvvtimes.server;
 import com.vvvtimes.JrebelUtil.JrebelSign;
 import com.vvvtimes.util.rsasign;
 import net.sf.json.JSONObject;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 public class MainServer extends AbstractHandler {
 
-    private static Map<String, String> parseArguments(String[] args)
-    {
-        if (args.length % 2 != 0)
-        {
+    private static Map<String, String> parseArguments(String[] args) {
+        if (args.length % 2 != 0) {
             throw new IllegalArgumentException("Error in argument's length ");
         }
-        
+
         Map<String, String> params = new HashMap<String, String>();
-        
-        for (int i = 0, len = args.length; i < len;)
-        {
+
+        for (int i = 0, len = args.length; i < len; ) {
             String argName = args[i++];
-            
-            if (argName.charAt(0) == '-')
-            {
-                if (argName.length() < 2)
-                {
+
+            if (argName.charAt(0) == '-') {
+                if (argName.length() < 2) {
                     throw new IllegalArgumentException("Error at argument " + argName);
                 }
-                
+
                 argName = argName.substring(1);
             }
-            
+
             params.put(argName, args[i++]);
         }
 
@@ -62,7 +55,7 @@ public class MainServer extends AbstractHandler {
         System.out.println("License Server started at http://localhost:" + port);
         System.out.println("JetBrains Activation address was: http://localhost:" + port + "/");
         System.out.println("JRebel 7.1 and earlier version Activation address was: http://localhost:" + port + "/{tokenname}, with any email.");
-        System.out.println("JRebel 2018.1 and later version Activation address was: http://localhost:" + port + "/{guid}(eg:http://localhost:" + port + "/"+ UUID.randomUUID().toString()+"), with any email.");
+        System.out.println("JRebel 2018.1 and later version Activation address was: http://localhost:" + port + "/{guid}(eg:http://localhost:" + port + "/" + UUID.randomUUID().toString() + "), with any email.");
 
         server.join();
     }
@@ -94,7 +87,7 @@ public class MainServer extends AbstractHandler {
         }
     }
 
-    private void jrebelValidateHandler(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException  {
+    private void jrebelValidateHandler(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json; charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
         baseRequest.setHandled(true);
@@ -119,6 +112,7 @@ public class MainServer extends AbstractHandler {
         response.setContentType("application/json; charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
         String username = request.getParameter("username");
+        username = "zphk".equals(username.toLowerCase()) ? "清風無敵" : username;
         baseRequest.setHandled(true);
         String jsonStr = "{\n" +
                 "    \"serverVersion\": \"3.2.4\",\n" +
@@ -130,7 +124,7 @@ public class MainServer extends AbstractHandler {
                 "    \"statusMessage\": null\n" +
                 "}\n";
         JSONObject jsonObject = JSONObject.fromObject(jsonStr);
-        if (username != null ) {
+        if (username != null) {
             jsonObject.put("company", username);
         }
         String body = jsonObject.toString();
@@ -143,6 +137,7 @@ public class MainServer extends AbstractHandler {
         response.setStatus(HttpServletResponse.SC_OK);
         String clientRandomness = request.getParameter("randomness");
         String username = request.getParameter("username");
+        username = "zphk".equals(username.toLowerCase()) ? "清風無敵" : username;
         String guid = request.getParameter("guid");
         System.out.println(((Request) request).getParameters());
         boolean offline = Boolean.parseBoolean(request.getParameter("offline"));
@@ -195,14 +190,14 @@ public class MainServer extends AbstractHandler {
         }
     }
 
-    private void releaseTicketHandler(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException{
+    private void releaseTicketHandler(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html; charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
         String salt = request.getParameter("salt");
         baseRequest.setHandled(true);
-        if(salt==null){
+        if (salt == null) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        }else{
+        } else {
             String xmlContent = "<ReleaseTicketResponse><message></message><responseCode>OK</responseCode><salt>" + salt + "</salt></ReleaseTicketResponse>";
             String xmlSignature = rsasign.Sign(xmlContent);
             String body = "<!-- " + xmlSignature + " -->\n" + xmlContent;
@@ -210,22 +205,22 @@ public class MainServer extends AbstractHandler {
         }
     }
 
-    private void obtainTicketHandler ( String target , Request baseRequest , HttpServletRequest request ,
-                                       HttpServletResponse response ) throws IOException
-    {
+    private void obtainTicketHandler(String target, Request baseRequest, HttpServletRequest request,
+                                     HttpServletResponse response) throws IOException {
         response.setContentType("text/html; charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
-        SimpleDateFormat fm=new SimpleDateFormat("EEE,d MMM yyyy hh:mm:ss Z", Locale.ENGLISH);
-        String date =fm.format(new Date())+" GMT";
+        SimpleDateFormat fm = new SimpleDateFormat("EEE,d MMM yyyy hh:mm:ss Z", Locale.ENGLISH);
+        String date = fm.format(new Date()) + " GMT";
         //response.setHeader("Date", date);
         //response.setHeader("Server", "fasthttp");
         String salt = request.getParameter("salt");
         String username = request.getParameter("userName");
+        username = "zphk".equals(username.toLowerCase()) ? "清風無敵" : username;
         String prolongationPeriod = "607875500";
         baseRequest.setHandled(true);
-        if(salt==null||username==null){
+        if (salt == null || username == null) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        }else{
+        } else {
             String xmlContent = "<ObtainTicketResponse><message></message><prolongationPeriod>" + prolongationPeriod + "</prolongationPeriod><responseCode>OK</responseCode><salt>" + salt + "</salt><ticketId>1</ticketId><ticketProperties>licensee=" + username + "\tlicenseType=0\t</ticketProperties></ObtainTicketResponse>";
             String xmlSignature = rsasign.Sign(xmlContent);
             String body = "<!-- " + xmlSignature + " -->\n" + xmlContent;
@@ -233,15 +228,14 @@ public class MainServer extends AbstractHandler {
         }
     }
 
-    private void pingHandler ( String target , Request baseRequest , HttpServletRequest request , HttpServletResponse response ) throws IOException
-    {
+    private void pingHandler(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html; charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
         String salt = request.getParameter("salt");
         baseRequest.setHandled(true);
-        if(salt==null){
+        if (salt == null) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        }else{
+        } else {
             String xmlContent = "<PingResponse><message></message><responseCode>OK</responseCode><salt>" + salt + "</salt></PingResponse>";
             String xmlSignature = rsasign.Sign(xmlContent);
             String body = "<!-- " + xmlSignature + " -->\n" + xmlContent;
@@ -256,13 +250,13 @@ public class MainServer extends AbstractHandler {
         baseRequest.setHandled(true);
 
         int port = request.getServerPort();
-		String scheme = request.getScheme();
-		
+        String scheme = request.getScheme();
+
         String html = "<h1>Hello,This is a Jrebel & JetBrains License Server!</h1>";
-        html += "<p>License Server started at " + scheme + "://"+request.getServerName()+":" + port;
-        html += "<p>JetBrains Activation address was: <span style='color:red'>" + scheme + "://"+request.getServerName()+":" + port + "/";
-        html += "<p>JRebel 7.1 and earlier version Activation address was: <span style='color:red'>" + scheme + "://"+request.getServerName()+":" + port + "/{tokenname}</span>, with any email.";
-        html += "<p>JRebel 2018.1 and later version Activation address was: " + scheme + "://"+request.getServerName()+":" + port + "/{guid}(eg:<span style='color:red'>" + scheme + "://"+request.getServerName()+":" + port + "/"+ UUID.randomUUID().toString()+"</span>), with any email.";
+        html += "<p>License Server started at " + scheme + "://" + request.getServerName() + ":" + port;
+        html += "<p>JetBrains Activation address was: <span style='color:red'>" + scheme + "://" + request.getServerName() + ":" + port + "/";
+        html += "<p>JRebel 7.1 and earlier version Activation address was: <span style='color:red'>" + scheme + "://" + request.getServerName() + ":" + port + "/{tokenname}</span>, with any email.";
+        html += "<p>JRebel 2018.1 and later version Activation address was: " + scheme + "://" + request.getServerName() + ":" + port + "/{guid}(eg:<span style='color:red'>" + scheme + "://" + request.getServerName() + ":" + port + "/" + UUID.randomUUID().toString() + "</span>), with any email.";
 
         response.getWriter().println(html);
 

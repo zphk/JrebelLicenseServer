@@ -13,7 +13,7 @@
     </properties>
 
     <build>
-		<finalName>${artifactId}</finalName>
+        <finalName>${artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -54,7 +54,7 @@
                     </execution>
                 </executions>
             </plugin>-->
-			<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>1.4</version>
@@ -70,8 +70,8 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-							<shadedArtifactAttached>false</shadedArtifactAttached>
-							<shadedClassifierName>original</shadedClassifierName>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <shadedClassifierName>original</shadedClassifierName>
                             <!-- 过滤掉以下文件，不打包 ：解决包重复引用导致的打包错误-->
                             <filters>
                                 <filter>
@@ -84,15 +84,18 @@
                                 </filter>
                             </filters>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/spring.handlers</resource>
                                 </transformer>
                                 <!-- 打成可执行的jar包 的主方法入口-->
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.vvvtimes.server.MainServer</mainClass>
                                 </transformer>
 
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/spring.schemas</resource>
                                 </transformer>
                             </transformers>
@@ -100,6 +103,46 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--<plugin>-->
+                <!--<groupId>com.github.wvengen</groupId>-->
+                <!--<artifactId>proguard-maven-plugin</artifactId>-->
+                <!--<version>2.0.7</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>proguard</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+                <!--<configuration>-->
+                    <!--<attach>true</attach>-->
+                    <!--<attachArtifactClassifier>pg</attachArtifactClassifier>-->
+                    <!--<options>-->
+                        <!--&lt;!&ndash; 详细配置方式参考 ProGuard 官方文档 &ndash;&gt;-->
+                        <!--<option>-ignorewarnings</option>-->
+                        <!--<option>-dontshrink</option>-->
+                        <!--<option>-dontoptimize</option>-->
+                        <!--<option>-dontskipnonpubliclibraryclasses</option>-->
+                        <!--<option>-dontskipnonpubliclibraryclassmembers</option>-->
+                        <!--<option>-repackageclasses org.noahx.proguard.example.project2.pg</option>-->
+                        <!--<option>-keeppackagenames</option>-->
+                        <!--&lt;!&ndash; 以下为 Keep，哪些内容保持不变，因为有一些内容混淆后（a,b,c）导致反射或按类名字符串相关的操作失效 &ndash;&gt;-->
+
+                        <!--<option>-keep class com.vvvtimes.server.MainServer</option>-->
+                        <!--<option>-keepattributes Signature</option>-->
+                        <!--<option>-keepclassmembers public class * {public static void main(***);}</option>-->
+                        <!--<option>-keepattributes SourceFile,LineNumberTable,*Annotation*</option>-->
+                    <!--</options>-->
+                    <!--<outjar>${project.build.finalName}-pg</outjar>-->
+                    <!--<libs>-->
+                        <!--<lib>${java.home}/lib/rt.jar</lib>-->
+                        <!--<lib>${java.home}/lib/jsse.jar</lib>-->
+                        <!--<lib>${java.home}/lib/jce.jar</lib>-->
+                    <!--</libs>-->
+
+                <!--</configuration>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 
@@ -142,7 +185,5 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.1</version>
         </dependency>
-
     </dependencies>
-
 </project>
